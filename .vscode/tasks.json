@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "debug",
+            "type": "shell",
+            "command": "cargo run"
+        },
+        {
+            "label": "database init",
+            "type": "shell",
+            "command": "sudo service mysql start"
+        },
+        {
+            "label": "database up",
+            "type": "shell",
+            "command": "cd ./migration && cargo run -- up"
+        },
+        {
+            "label": "database down",
+            "type": "shell",
+            "command": "cd ./migration && cargo run -- down"
+        }
+    ]
+}

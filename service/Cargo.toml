@@ -1,11 +1,13 @@
 [package]
-name = "next"
+name = "next-service"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-[workspace]
-members = [".", "api", "service", "core", "entity", "migration"]
 
 [dependencies]
-next-api = { path = "./api" }
+next-core = { path = "../core" }
+
+thiserror = { version = "1.0" }
+
+serde = { version = "1.0", features = ["derive"] }
