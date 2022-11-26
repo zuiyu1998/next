@@ -1,4 +1,11 @@
-use poem::{get, handler, post, Endpoint, Route};
+use super::models::UserForm;
+use next_service::Service;
+use poem::{
+    get, handler, post,
+    web::{Data, Form, Json},
+    Endpoint, Route,
+};
+use serde_json::{json, Value};
 
 //用户修改昵称
 #[handler]
@@ -32,13 +39,21 @@ async fn login() -> poem::Result<()> {
 
 //创建用户
 #[handler]
-async fn create() -> poem::Result<()> {
-    todo!()
+async fn create(
+    Data(service): Data<&Service>,
+    Form(user_form): Form<UserForm>,
+) -> poem::Result<Json<Value>> {
+    let user = super::apis::create(service, user_form).await?;
+
+    Ok(Json(json!({
+        "code": 200,
+        "data": user
+    })))
 }
 
 pub fn config() -> impl Endpoint {
     Route::new()
-        .at("/crate", post(create))
+        .at("/create", post(create))
         .at("/login", post(login))
         .at("/info", get(info))
         .at("/forget_password", post(forget_password))

@@ -27,7 +27,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Column::NikeName)
-                            .char_len(20)
+                            .char_len(50)
                             .unique_key()
                             .not_null(),
                     )

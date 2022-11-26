@@ -15,6 +15,10 @@ pub struct Service {
 }
 
 impl Service {
+    pub fn new(conn: DatabaseConnection) -> Self {
+        Self { conn }
+    }
+
     pub async fn begin(&self) -> Result<Transaction> {
         let begin = self.conn.begin().await?;
 
@@ -28,5 +32,9 @@ impl Transaction {
     pub async fn commit(self) -> Result<()> {
         self.0.commit().await?;
         Ok(())
+    }
+
+    pub fn user(&self) -> users::UserService {
+        users::UserService::new(&self.0)
     }
 }
