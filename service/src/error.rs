@@ -68,7 +68,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 mod tests {
 
     #[test]
-    fn error_from_string() {
+    fn from_string() {
         use super::{Error, Kind};
 
         let raw = "error returned from database: 1062 (23000): Duplicate entry '1542844298@qq.com' for key 'users.email'".to_string();

@@ -18,6 +18,7 @@ pub struct UserUpdate {
 pub struct UserFind {
     pub id: Option<i32>,
     pub uid: Option<String>,
+    pub email: Option<String>,
 }
 
 #[derive(Debug, Default)]

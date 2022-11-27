@@ -19,6 +19,10 @@ impl Service {
         Self { conn }
     }
 
+    pub fn user(&self) -> users::UserService {
+        users::UserService::new_connection(&self.conn)
+    }
+
     pub async fn begin(&self) -> Result<Transaction> {
         let begin = self.conn.begin().await?;
 
@@ -35,6 +39,6 @@ impl Transaction {
     }
 
     pub fn user(&self) -> users::UserService {
-        users::UserService::new(&self.0)
+        users::UserService::new_transaction(&self.0)
     }
 }

@@ -58,6 +58,8 @@ impl Api {
             sql = sql.filter(Column::Id.eq(user_find.id.unwrap()));
         } else if user_find.uid.is_some() {
             sql = sql.filter(Column::Uid.eq(user_find.uid.unwrap()));
+        } else if user_find.email.is_some() {
+            sql = sql.filter(Column::Email.eq(user_find.email.unwrap()));
         }
 
         sql.one(c).await
