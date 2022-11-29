@@ -1,4 +1,4 @@
-use super::models::UserForm;
+use super::models::{UserForm, UserNikeNamedUpdate, UserPasswordUpdate};
 use crate::middlewares::{Auth, Bearer, JwtAuth};
 use next_service::Service;
 use poem::{
@@ -12,20 +12,44 @@ use next_service::users::User;
 
 //用户修改昵称
 #[handler]
-async fn update_nike_name() -> poem::Result<()> {
-    todo!()
+async fn update_nike_name(
+    Data(service): Data<&Service>,
+    Data(user): Data<&User>,
+    Form(user_password_update): Form<UserNikeNamedUpdate>,
+) -> poem::Result<Json<Value>> {
+    super::apis::update_nike_name(service, user, user_password_update).await?;
+
+    Ok(Json(json!({
+        "code": 200,
+    })))
 }
 
 //用户修改密码
 #[handler]
-async fn update_password() -> poem::Result<()> {
-    todo!()
+async fn update_password(
+    Data(service): Data<&Service>,
+    Data(user): Data<&User>,
+    Form(user_password_update): Form<UserPasswordUpdate>,
+) -> poem::Result<Json<Value>> {
+    super::apis::update_password(service, user, user_password_update).await?;
+
+    Ok(Json(json!({
+        "code": 200,
+    })))
 }
 
 //用户忘记密码
 #[handler]
-async fn forget_password() -> poem::Result<()> {
-    todo!()
+async fn forget_password(
+    Data(service): Data<&Service>,
+    Data(user): Data<&User>,
+    Form(user_password_update): Form<UserPasswordUpdate>,
+) -> poem::Result<Json<Value>> {
+    super::apis::update_password(service, user, user_password_update).await?;
+
+    Ok(Json(json!({
+        "code": 200,
+    })))
 }
 
 //用户信息

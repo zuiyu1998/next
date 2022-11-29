@@ -10,6 +10,8 @@ pub type Result<T> = anyhow::Result<T>;
 pub enum Kind {
     #[error("PasswordError")]
     PasswordError,
+    #[error("SameName")]
+    SameName,
 }
 
 #[derive(Debug, Error)]
