@@ -5,6 +5,7 @@ use next_core::sea_orm::{DatabaseConnection, DatabaseTransaction, TransactionTra
 
 pub mod error;
 
+pub mod level_template;
 pub mod users;
 
 use error::Result;
@@ -14,6 +15,11 @@ pub struct Service {
     conn: DatabaseConnection,
 }
 
+pub enum ServiceInner<'a> {
+    Transaction(&'a DatabaseTransaction),
+    Conn(&'a DatabaseConnection),
+}
+
 impl Service {
     pub fn new(conn: DatabaseConnection) -> Self {
         Self { conn }
@@ -21,6 +27,10 @@ impl Service {
 
     pub fn user(&self) -> users::UserService {
         users::UserService::new_connection(&self.conn)
+    }
+
+    pub fn level_template(&self) -> level_template::LevelTemplateService {
+        level_template::LevelTemplateService::new_connection(&self.conn)
     }
 
     pub async fn begin(&self) -> Result<Transaction> {
@@ -40,5 +50,9 @@ impl Transaction {
 
     pub fn user(&self) -> users::UserService {
         users::UserService::new_transaction(&self.0)
+    }
+
+    pub fn level_template(&self) -> level_template::LevelTemplateService {
+        level_template::LevelTemplateService::new_transaction(&self.0)
     }
 }

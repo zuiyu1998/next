@@ -1,15 +1,10 @@
-use crate::Result;
+use crate::{Result, ServiceInner};
 use next_core::sea_orm::DatabaseConnection;
 use next_core::{sea_orm::DatabaseTransaction, users};
 use sha2::{Digest, Sha256};
 
 pub use next_core::prelude::User;
 pub use next_core::users::*;
-
-pub enum ServiceInner<'a> {
-    Transaction(&'a DatabaseTransaction),
-    Conn(&'a DatabaseConnection),
-}
 
 pub struct UserService<'a>(ServiceInner<'a>);
 

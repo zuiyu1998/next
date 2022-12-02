@@ -6,6 +6,8 @@ use thiserror::Error;
 pub enum Kind {
     #[error("UserAlreadyExists")]
     UserAlreadyExists,
+    #[error("LevelTemplateFormateError")]
+    LevelTemplateFormateError,
 }
 
 #[derive(Debug, Error, PartialEq, Eq)]
@@ -60,6 +62,12 @@ pub fn from_(e: DbErr) -> Error {
 impl From<DbErr> for Error {
     fn from(e: DbErr) -> Self {
         from_(e)
+    }
+}
+
+impl From<Kind> for Error {
+    fn from(e: Kind) -> Self {
+        Error::Kind(e)
     }
 }
 
