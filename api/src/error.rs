@@ -12,6 +12,8 @@ pub enum Kind {
     PasswordError,
     #[error("SameName")]
     SameName,
+    #[error("FormatError")]
+    FormatError,
 }
 
 #[derive(Debug, Error)]

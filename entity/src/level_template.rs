@@ -10,6 +10,7 @@ pub struct Model {
     pub content: String,
     pub create_at: ChronoDateTime,
     pub update_at: ChronoDateTime,
+    pub status: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

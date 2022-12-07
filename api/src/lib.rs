@@ -2,9 +2,11 @@ use next_service::sea_orm::Database;
 use poem::{listener::TcpListener, middleware::Tracing, EndpointExt, Server};
 pub use tokio;
 
+pub mod admin;
 pub mod users;
 
 pub mod app;
+
 pub mod error;
 pub mod middlewares;
 

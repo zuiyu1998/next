@@ -8,7 +8,7 @@ use validator::Validate;
 
 use super::models::{UserForm, UserNikeNamedUpdate, UserPasswordUpdate};
 
-// 修改密码
+// 修改昵称
 pub async fn update_nike_name(
     service: &Service,
     user: &User,
@@ -91,7 +91,7 @@ pub async fn login(service: &Service, user_form: UserForm) -> ResponseResult<Str
     Ok(token)
 }
 
-//创建
+//创建用户
 pub async fn create(service: &Service, user_form: UserForm) -> ResponseResult<User> {
     user_form.validate()?;
 

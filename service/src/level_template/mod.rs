@@ -3,6 +3,7 @@ use crate::{Result, ServiceInner};
 use next_core::sea_orm::DatabaseConnection;
 use next_core::{level_template, sea_orm::DatabaseTransaction};
 use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 pub use next_core::level_template::*;
 pub use next_core::prelude::LevelTemplate;
@@ -46,9 +47,10 @@ impl LevelController {
     }
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, Validate)]
 pub struct LevelInfo {
     pub need_count: i32,
+    #[validate(length(min = 1, max = 20))]
     pub name: String,
     pub level: i32,
 }

@@ -28,6 +28,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Column::Content).text().not_null())
                     .col(ColumnDef::new(Column::CreateAt).date_time().not_null())
                     .col(ColumnDef::new(Column::UpdateAt).date_time().not_null())
+                    .col(ColumnDef::new(Column::Status).boolean().not_null())
                     .to_owned(),
             )
             .await
