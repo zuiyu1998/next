@@ -57,7 +57,7 @@ impl Api {
         if user_find.id.is_some() {
             sql = sql.filter(Column::Id.eq(user_find.id.unwrap()));
         } else if user_find.uid.is_some() {
-            sql = sql.filter(Column::Uid.eq(user_find.uid.unwrap()));
+            sql = sql.filter(Column::Uid.like(&user_find.uid.unwrap()));
         } else if user_find.email.is_some() {
             sql = sql.filter(Column::Email.eq(user_find.email.unwrap()));
         }

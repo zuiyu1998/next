@@ -542,6 +542,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "dashmap"
+version = "5.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "907076dfda823b0b36d2a1bb5f90c96660a5bbcd7729e10727f07858f22c4edc"
+dependencies = [
+ "cfg-if",
+ "hashbrown",
+ "lock_api",
+ "once_cell",
+ "parking_lot_core 0.9.4",
+ "serde",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1254,11 +1268,13 @@ name = "next-api"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "dashmap",
  "dotenvy",
  "figment",
  "hmac",
  "jwt",
  "next-service",
+ "once_cell",
  "poem",
  "serde",
  "serde_json",

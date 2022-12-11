@@ -6,8 +6,10 @@ pub mod admin;
 pub mod users;
 
 pub mod app;
+pub mod data;
 
 pub mod error;
+pub mod extra;
 pub mod middlewares;
 
 pub mod config;

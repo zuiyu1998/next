@@ -1,11 +1,34 @@
-use crate::error::ResponseResult;
+use std::collections::HashMap;
+
+use crate::{data::APPCONFIG, error::ResponseResult};
 use next_service::{
     level_template::{LevelTemplate, LevelTemplateCreate, LevelTemplateQuery},
     Service,
 };
 use validator::Validate;
 
-use super::models::{LevelTemplateCreateOption, LevelTemplateQueryOption};
+use super::models::{KeyAndValueOption, LevelTemplateCreateOption, LevelTemplateQueryOption};
+
+//获取全局字典
+pub async fn set_app_config(option: KeyAndValueOption) -> ResponseResult<()> {
+    option.validate()?;
+
+    APPCONFIG.insert(option.key, option.value);
+    APPCONFIG.store();
+
+    Ok(())
+}
+
+//获取全局字典
+pub async fn get_app_config() -> ResponseResult<HashMap<String, String>> {
+    let mut map = HashMap::default();
+
+    APPCONFIG.iter().for_each(|entity| {
+        map.insert(entity.key().to_string(), entity.value().to_string());
+    });
+
+    Ok(map)
+}
 
 //获取等级模板列表
 pub async fn find_level_templates(

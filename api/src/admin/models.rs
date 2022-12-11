@@ -4,6 +4,14 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 #[derive(Debug, Deserialize, Serialize, Validate, Clone)]
+pub struct KeyAndValueOption {
+    #[validate(length(min = 1, max = 200))]
+    pub key: String,
+    #[validate(length(min = 1, max = 200))]
+    pub value: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, Validate, Clone)]
 pub struct LevelTemplateQueryOption {
     pub page: i32,
     pub page_size: i32,

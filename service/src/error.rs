@@ -6,6 +6,8 @@ use thiserror::Error;
 pub enum Kind {
     #[error("UserAlreadyExists")]
     UserAlreadyExists,
+    #[error("UserNotFound")]
+    UserNotFound,
     #[error("LevelTemplateFormateError")]
     LevelTemplateFormateError,
 }

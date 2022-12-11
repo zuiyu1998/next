@@ -47,6 +47,8 @@ async fn call_(req: &Request) -> ResponseResult<User> {
 
     let uid = decode(&token)?;
 
+    tracing::info!("uid is: {}", uid);
+
     let service: &Service = req.extensions().get().unwrap();
 
     let mut user_find = UserFind::default();

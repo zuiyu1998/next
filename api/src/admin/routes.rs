@@ -1,3 +1,5 @@
+use super::models::{KeyAndValueOption, LevelTemplateCreateOption, LevelTemplateQueryOption};
+use crate::extra::FormOrJson;
 use crate::middlewares::{Auth, Bearer, JwtAuth};
 use next_service::Service;
 use poem::{
@@ -7,9 +9,30 @@ use poem::{
 };
 use serde_json::{json, Value};
 
-use super::models::{LevelTemplateCreateOption, LevelTemplateQueryOption};
-
 use next_service::users::User;
+
+//设置全局字典
+#[handler]
+async fn set_app_config(
+    FormOrJson(option): FormOrJson<KeyAndValueOption>,
+) -> poem::Result<Json<Value>> {
+    super::apis::set_app_config(option).await?;
+
+    Ok(Json(json!({
+        "code": 200,
+    })))
+}
+
+//获取全局字典
+#[handler]
+async fn get_app_config() -> poem::Result<Json<Value>> {
+    let data = super::apis::get_app_config().await?;
+
+    Ok(Json(json!({
+        "code": 200,
+        "result": data,
+    })))
+}
 
 //模板列表
 #[handler]
@@ -33,10 +56,13 @@ async fn find_level_templates(
 
     Ok(Json(json!({
         "code": 200,
-        "data": data,
-        "page": page,
-        "page_size": page_size,
-        "has_next": has_next
+        "result": {
+            "page": page,
+            "page_size": page_size,
+            "has_next": has_next,
+            "data": data
+        },
+
     })))
 }
 
@@ -50,7 +76,7 @@ async fn create_level_template(
     super::apis::create_level_template(service, option).await?;
     Ok(Json(json!({
         "code": 200,
-        "data": user
+        "result": user
     })))
 }
 
@@ -71,4 +97,11 @@ pub fn config() -> impl Endpoint {
                 .with(jwt_auth.clone())
                 .with(auth.clone()),
         )
+        .at(
+            "/set_app_config",
+            post(set_app_config)
+                .with(jwt_auth.clone())
+                .with(auth.clone()),
+        )
+        .at("/get_app_config", get(get_app_config))
 }

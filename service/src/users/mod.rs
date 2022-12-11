@@ -1,3 +1,4 @@
+use crate::error::Kind;
 use crate::{Result, ServiceInner};
 use next_core::sea_orm::DatabaseConnection;
 use next_core::{sea_orm::DatabaseTransaction, users};
@@ -46,8 +47,12 @@ impl<'a> UserService<'a> {
 
     pub async fn find(&self, user_find: UserFind) -> Result<User> {
         let user = match self.0 {
-            ServiceInner::Transaction(c) => users::Api::find(c, user_find).await?.unwrap(),
-            ServiceInner::Conn(c) => users::Api::find(c, user_find).await?.unwrap(),
+            ServiceInner::Transaction(c) => users::Api::find(c, user_find)
+                .await?
+                .ok_or(Kind::UserNotFound)?,
+            ServiceInner::Conn(c) => users::Api::find(c, user_find)
+                .await?
+                .ok_or(Kind::UserNotFound)?,
         };
         Ok(user)
     }
