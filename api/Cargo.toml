@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 # 错误处理
 thiserror = { version = "1.0" }
-anyhow = { version = "1.0" }
+anyhow = { version = "1.0.0" }
 
 tokio = { version = "1.0", features = ["full"] }
 poem = { version = "1.3" }

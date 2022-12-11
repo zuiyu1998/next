@@ -11,7 +11,7 @@
         {
             "label": "database init",
             "type": "shell",
-            "command": "sudo service mysql start"
+            "command": "sudo service postgresql start && ./wsl_update_hosts.sh"
         },
         {
             "label": "database up",

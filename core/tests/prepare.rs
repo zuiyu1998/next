@@ -15,7 +15,7 @@ pub fn get_time() -> NaiveDateTime {
 pub fn prepare_mock_db() -> DatabaseConnection {
     let dt = get_time();
 
-    MockDatabase::new(DatabaseBackend::MySql)
+    MockDatabase::new(DatabaseBackend::postgres)
         .append_query_results(vec![vec![users::Model {
             id: 1,
             uid: "01".to_owned(),

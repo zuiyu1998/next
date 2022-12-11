@@ -17,7 +17,7 @@ next-entity = { path = "../entity" }
 version = "^0.9.0"
 features = [
   "runtime-tokio-native-tls",
-  "sqlx-mysql"
+  "sqlx-postgres"
 ]
 
 
