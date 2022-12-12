@@ -54,10 +54,12 @@ async fn forget_password(
 
 //用户信息
 #[handler]
-async fn info(Data(user): Data<&User>) -> poem::Result<Json<Value>> {
+async fn info(Data(service): Data<&Service>, Data(user): Data<&User>) -> poem::Result<Json<Value>> {
+    let user_info = super::apis::info(service, user).await?;
+
     Ok(Json(json!({
         "code": 200,
-        "data": user
+        "data": user_info
     })))
 }
 

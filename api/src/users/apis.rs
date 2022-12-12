@@ -1,13 +1,25 @@
 use crate::error::{Kind, ResponseResult};
 use crate::middlewares::service_auth::encode;
+use next_service::popularity::PopularityCreate;
 use next_service::{
-    users::{User, UserCreate, UserFind, UserService, UserUpdate},
+    users::{User, UserFind, UserService, UserUpdate},
     Service,
 };
 use validator::Validate;
 
-use super::models::{UserForm, UserNikeNamedUpdate, UserPasswordUpdate};
+use super::models::{UserForm, UserInfo, UserNikeNamedUpdate, UserPasswordUpdate};
 
+//获取用户必要信息
+pub async fn info(service: &Service, user: &User) -> ResponseResult<UserInfo> {
+    let begin = service.begin().await?;
+    let popularity_service = begin.popularity();
+    let popularity = popularity_service.find(user.id).await?;
+
+    begin.commit().await?;
+
+    let info = UserInfo::new(user, popularity);
+    Ok(info)
+}
 // 修改昵称
 pub async fn update_nike_name(
     service: &Service,
@@ -95,16 +107,36 @@ pub async fn login(service: &Service, user_form: UserForm) -> ResponseResult<Str
 pub async fn create(service: &Service, user_form: UserForm) -> ResponseResult<User> {
     user_form.validate()?;
 
-    let mut user_create = UserCreate::default();
+    let user_create = user_form.into();
 
-    user_create.email = user_form.email;
-    user_create.password = UserService::spawn_password(&user_form.password);
+    let mut popularity_create = PopularityCreate::default();
+
+    popularity_create.level_template_name = "user_popularity".to_owned();
 
     let begin = service.begin().await?;
 
     let user_serivice = begin.user();
 
     let user = user_serivice.create(user_create).await?;
+
+    let level_template_service = begin.level_template();
+
+    let level_controller = level_template_service
+        .find(&popularity_create.level_template_name)
+        .await?;
+
+    let level = level_controller
+        .current_level(0)
+        .ok_or(Kind::PasswordError)?;
+
+    popularity_create.name = level.name.to_owned();
+    popularity_create.level = level.level;
+    popularity_create.next_need_count = level.next_need_count;
+    popularity_create.user_id = user.id;
+
+    let popularity_service = begin.popularity();
+
+    popularity_service.create(popularity_create).await?;
 
     begin.commit().await?;
 

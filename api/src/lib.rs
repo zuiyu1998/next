@@ -27,6 +27,8 @@ pub async fn init() -> Result<()> {
 
     let service = next_service::Service::new(conn);
 
+    config::init(&service).await;
+
     let app = app::create()
         .with(Tracing)
         .data(config.clone())

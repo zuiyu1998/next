@@ -6,6 +6,7 @@ use next_core::sea_orm::{DatabaseConnection, DatabaseTransaction, TransactionTra
 pub mod error;
 
 pub mod level_template;
+pub mod popularity;
 pub mod users;
 
 use error::Result;
@@ -33,6 +34,10 @@ impl Service {
         level_template::LevelTemplateService::new_connection(&self.conn)
     }
 
+    pub fn popularity(&self) -> popularity::PopularityService {
+        popularity::PopularityService::new_connection(&self.conn)
+    }
+
     pub async fn begin(&self) -> Result<Transaction> {
         let begin = self.conn.begin().await?;
 
@@ -54,5 +59,9 @@ impl Transaction {
 
     pub fn level_template(&self) -> level_template::LevelTemplateService {
         level_template::LevelTemplateService::new_transaction(&self.0)
+    }
+
+    pub fn popularity(&self) -> popularity::PopularityService {
+        popularity::PopularityService::new_transaction(&self.0)
     }
 }

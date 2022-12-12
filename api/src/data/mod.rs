@@ -15,7 +15,7 @@ pub static APPCONFIG: Lazy<AppConfig> = Lazy::new(|| AppConfig::load());
 pub struct AppConfig(DashMap<String, String>);
 
 impl AppConfig {
-    const PATH: &'static str = "app_config.json";
+    const PATH: &'static str = "./app_config.json";
 
     fn load() -> Self {
         match Self::load_() {
@@ -32,6 +32,7 @@ impl AppConfig {
     fn load_() -> Result<Self> {
         let mut file = fs::OpenOptions::new()
             .create(true)
+            .write(true)
             .read(true)
             .open(Self::PATH)?;
 

@@ -9,7 +9,7 @@ pub struct Model {
     pub uid: String,
     pub nike_name: String,
     pub email: String,
-    #[serde(skip_deserializing)]
+    #[serde(skip_serializing)]
     pub password: Vec<u8>,
     pub create_at: ChronoDateTime,
     pub update_at: ChronoDateTime,

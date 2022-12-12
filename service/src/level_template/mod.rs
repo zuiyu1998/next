@@ -49,7 +49,7 @@ impl LevelController {
 
 #[derive(Debug, Clone, Deserialize, Serialize, Validate)]
 pub struct LevelInfo {
-    pub need_count: i32,
+    pub next_need_count: i32,
     #[validate(length(min = 1, max = 20))]
     pub name: String,
     pub level: i32,

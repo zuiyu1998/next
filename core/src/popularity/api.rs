@@ -20,6 +20,7 @@ impl Api {
         active.count = Set(popularity_create.count);
         active.level = Set(popularity_create.level);
         active.user_id = Set(popularity_create.user_id);
+        active.next_need_count = Set(popularity_create.next_need_count);
 
         let now = Local::now();
 

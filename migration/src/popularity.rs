@@ -1,4 +1,4 @@
-use next_entity::level_template::{Column, Entity};
+use next_entity::popularity::{Column, Entity};
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -20,12 +20,20 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(
-                        ColumnDef::new(Column::Name)
-                            .char_len(20)
+                        ColumnDef::new(Column::UserId)
+                            .integer()
                             .unique_key()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(Column::Content).text().not_null())
+                    .col(ColumnDef::new(Column::Level).integer().not_null())
+                    .col(ColumnDef::new(Column::Count).integer().not_null())
+                    .col(ColumnDef::new(Column::NextNeedCount).integer().not_null())
+                    .col(ColumnDef::new(Column::Name).char_len(20).not_null())
+                    .col(
+                        ColumnDef::new(Column::LevelTemplateName)
+                            .char_len(100)
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(Column::CreateAt).date_time().not_null())
                     .col(ColumnDef::new(Column::UpdateAt).date_time().not_null())
                     .to_owned(),

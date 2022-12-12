@@ -20,6 +20,7 @@
     * level 声望等级 int32
     * name 当前声望的称号 vchar20
     * count 当前经验 Int32
+    * next_need_count 下一级所需经验 ini32
     * create_at 创建时间 time
     * update_at 更新时间 time
     * level_template_name 使用模板名称

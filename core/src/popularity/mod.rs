@@ -16,6 +16,7 @@ pub struct PopularityCreate {
     pub name: String,
     pub count: i32,
     pub level_template_name: String,
+    pub next_need_count: i32,
 }
 
 #[derive(Debug, Default)]

@@ -10,6 +10,7 @@ pub struct Model {
     pub level: i32,
     pub name: String,
     pub count: i32,
+    pub next_need_count: i32,
     pub level_template_name: String,
     pub create_at: ChronoDateTime,
     pub update_at: ChronoDateTime,
