@@ -1,7 +1,32 @@
 use crate::error::{Kind, ResponseResult};
 use next_service::level_template::{LevelInfo, LevelTemplateQuery};
+use next_service::users::{User, UserQuery};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
+
+#[derive(Debug, Deserialize, Serialize, Validate, Clone)]
+pub struct UserQueryRequest {
+    pub page: i32,
+    pub page_size: i32,
+}
+
+#[derive(Debug, Deserialize, Serialize, Validate, Clone, Default)]
+pub struct UserQueryResponse {
+    pub page: i32,
+    pub page_size: i32,
+    pub has_next: bool,
+    pub data: Vec<User>,
+}
+
+impl From<UserQueryRequest> for UserQuery {
+    fn from(req: UserQueryRequest) -> Self {
+        let mut query = UserQuery::default();
+        query.page = req.page;
+        query.page_size = req.page_size;
+
+        query
+    }
+}
 
 #[derive(Debug, Deserialize, Serialize, Validate, Clone)]
 pub struct KeyAndValueOption {

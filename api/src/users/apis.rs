@@ -1,3 +1,4 @@
+use super::models::{UserCreateRequest, UserInfo, UserLoginRequest, UserUpdatePasswordRequest};
 use crate::error::{Kind, ResponseResult};
 use crate::middlewares::service_auth::encode;
 use next_service::popularity::PopularityCreate;
@@ -6,8 +7,6 @@ use next_service::{
     Service,
 };
 use validator::Validate;
-
-use super::models::{UserForm, UserInfo, UserNikeNamedUpdate, UserPasswordUpdate};
 
 //获取用户必要信息
 pub async fn info(service: &Service, user: &User) -> ResponseResult<UserInfo> {
@@ -20,47 +19,21 @@ pub async fn info(service: &Service, user: &User) -> ResponseResult<UserInfo> {
     let info = UserInfo::new(user, popularity);
     Ok(info)
 }
-// 修改昵称
-pub async fn update_nike_name(
-    service: &Service,
-    user: &User,
-    user_nike_named_update: UserNikeNamedUpdate,
-) -> ResponseResult<User> {
-    user_nike_named_update.validate()?;
-
-    if user.nike_name == user_nike_named_update.nike_name {
-        return Err(Kind::SameName.into());
-    }
-
-    let mut user_update = UserUpdate::default();
-
-    user_update.nike_name = Some(user_nike_named_update.nike_name);
-
-    let begin = service.begin().await?;
-
-    let user_serivice = begin.user();
-
-    let user = user_serivice.update(user_update).await?;
-
-    begin.commit().await?;
-
-    Ok(user)
-}
 
 // 修改密码
 pub async fn update_password(
     service: &Service,
     user: &User,
-    user_password_update: UserPasswordUpdate,
+    user_update_password_req: UserUpdatePasswordRequest,
 ) -> ResponseResult<User> {
-    user_password_update.validate()?;
+    user_update_password_req.validate()?;
 
-    let old_password = UserService::spawn_password(&user_password_update.old_password);
+    let old_password = UserService::spawn_password(&user_update_password_req.old_password);
 
     if user.password != old_password {
         return Err(Kind::PasswordError.into());
     }
-    let new_password = UserService::spawn_password(&user_password_update.new_password);
+    let new_password = UserService::spawn_password(&user_update_password_req.new_password);
 
     let mut user_update = UserUpdate::default();
 
@@ -78,19 +51,19 @@ pub async fn update_password(
 }
 
 //登录
-pub async fn login(service: &Service, user_form: UserForm) -> ResponseResult<String> {
-    user_form.validate()?;
+pub async fn login(service: &Service, user_login_req: UserLoginRequest) -> ResponseResult<String> {
+    user_login_req.validate()?;
 
     let mut user_find = UserFind::default();
 
-    user_find.email = Some(user_form.email);
+    user_find.email = Some(user_login_req.email);
 
     let begin = service.begin().await?;
 
     let user_serivice = begin.user();
 
     let user = user_serivice.find(user_find).await?;
-    let password = UserService::spawn_password(&user_form.password);
+    let password = UserService::spawn_password(&user_login_req.password);
 
     if password != user.password {
         return Err(Kind::PasswordError.into());
@@ -104,10 +77,10 @@ pub async fn login(service: &Service, user_form: UserForm) -> ResponseResult<Str
 }
 
 //创建用户
-pub async fn create(service: &Service, user_form: UserForm) -> ResponseResult<User> {
-    user_form.validate()?;
+pub async fn create(service: &Service, user_create_req: UserCreateRequest) -> ResponseResult<User> {
+    user_create_req.validate()?;
 
-    let user_create = user_form.into();
+    let user_create = user_create_req.into();
 
     let mut popularity_create = PopularityCreate::default();
 

@@ -1,4 +1,5 @@
-use super::models::{UserForm, UserNikeNamedUpdate, UserPasswordUpdate};
+use super::models::{UserCreateRequest, UserLoginRequest, UserUpdatePasswordRequest};
+use crate::extra::FormOrJson;
 use crate::middlewares::{Auth, Bearer, JwtAuth};
 use next_service::Service;
 use poem::{
@@ -10,42 +11,14 @@ use serde_json::{json, Value};
 
 use next_service::users::User;
 
-//用户修改昵称
-#[handler]
-async fn update_nike_name(
-    Data(service): Data<&Service>,
-    Data(user): Data<&User>,
-    Form(user_password_update): Form<UserNikeNamedUpdate>,
-) -> poem::Result<Json<Value>> {
-    super::apis::update_nike_name(service, user, user_password_update).await?;
-
-    Ok(Json(json!({
-        "code": 200,
-    })))
-}
-
 //用户修改密码
 #[handler]
 async fn update_password(
     Data(service): Data<&Service>,
     Data(user): Data<&User>,
-    Form(user_password_update): Form<UserPasswordUpdate>,
+    Form(user_update_password_req): Form<UserUpdatePasswordRequest>,
 ) -> poem::Result<Json<Value>> {
-    super::apis::update_password(service, user, user_password_update).await?;
-
-    Ok(Json(json!({
-        "code": 200,
-    })))
-}
-
-//用户忘记密码
-#[handler]
-async fn forget_password(
-    Data(service): Data<&Service>,
-    Data(user): Data<&User>,
-    Form(user_password_update): Form<UserPasswordUpdate>,
-) -> poem::Result<Json<Value>> {
-    super::apis::update_password(service, user, user_password_update).await?;
+    super::apis::update_password(service, user, user_update_password_req).await?;
 
     Ok(Json(json!({
         "code": 200,
@@ -59,7 +32,7 @@ async fn info(Data(service): Data<&Service>, Data(user): Data<&User>) -> poem::R
 
     Ok(Json(json!({
         "code": 200,
-        "data": user_info
+        "result": user_info
     })))
 }
 
@@ -67,13 +40,13 @@ async fn info(Data(service): Data<&Service>, Data(user): Data<&User>) -> poem::R
 #[handler]
 async fn login(
     Data(service): Data<&Service>,
-    Form(user_form): Form<UserForm>,
+    FormOrJson(user_login_req): FormOrJson<UserLoginRequest>,
 ) -> poem::Result<Json<Value>> {
-    let user_tokon = super::apis::login(service, user_form).await?;
+    let user_tokon = super::apis::login(service, user_login_req).await?;
 
     Ok(Json(json!({
         "code": 200,
-        "data": user_tokon
+        "result": user_tokon
     })))
 }
 
@@ -81,9 +54,9 @@ async fn login(
 #[handler]
 async fn create(
     Data(service): Data<&Service>,
-    Form(user_form): Form<UserForm>,
+    Form(user_create_req): Form<UserCreateRequest>,
 ) -> poem::Result<Json<Value>> {
-    let user = super::apis::create(service, user_form).await?;
+    let user = super::apis::create(service, user_create_req).await?;
 
     Ok(Json(json!({
         "code": 200,
@@ -100,20 +73,8 @@ pub fn config() -> impl Endpoint {
         .at("/login", post(login))
         .at("/info", get(info).with(jwt_auth.clone()).with(auth.clone()))
         .at(
-            "/forget_password",
-            post(forget_password)
-                .with(jwt_auth.clone())
-                .with(auth.clone()),
-        )
-        .at(
             "/update_password",
             post(update_password)
-                .with(jwt_auth.clone())
-                .with(auth.clone()),
-        )
-        .at(
-            "/update_nike_name",
-            post(update_nike_name)
                 .with(jwt_auth.clone())
                 .with(auth.clone()),
         )

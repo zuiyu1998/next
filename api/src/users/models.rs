@@ -9,7 +9,6 @@ use next_service::users::{User, UserCreate, UserService};
 pub struct UserInfo {
     pub id: i32,
     pub uid: String,
-    pub nike_name: String,
     pub email: String,
     pub create_at: ChronoDateTime,
     pub update_at: ChronoDateTime,
@@ -22,10 +21,9 @@ impl UserInfo {
         UserInfo {
             id: user.id,
             uid: user.uid.to_owned(),
-            nike_name: user.nike_name.to_owned(),
             email: user.email.to_owned(),
-            create_at: user.create_at,
-            update_at: user.update_at,
+            create_at: user.create_at.to_owned(),
+            update_at: user.update_at.to_owned(),
             status: user.status,
             popularity,
         }
@@ -33,34 +31,47 @@ impl UserInfo {
 }
 
 #[derive(Debug, Deserialize, Serialize, Validate)]
-pub struct UserForm {
-    #[validate(length(min = 1, max = 100))]
+pub struct UserUpdatePasswordRequest {
+    #[validate(length(min = 8, max = 16))]
+    pub old_password: String,
+    #[validate(length(min = 8, max = 16))]
+    pub new_password: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, Validate)]
+pub struct UserCreateRequest {
+    #[validate(length(min = 1, max = 100), email)]
     pub email: String,
     #[validate(length(min = 8, max = 16))]
     pub password: String,
 }
 
-impl From<UserForm> for UserCreate {
-    fn from(form: UserForm) -> Self {
-        let mut user_create = UserCreate::default();
+impl From<UserCreateRequest> for UserCreate {
+    fn from(req: UserCreateRequest) -> Self {
+        let mut create = UserCreate::default();
 
-        user_create.email = form.email;
-        user_create.password = UserService::spawn_password(&form.password);
+        create.email = req.email;
+        create.password = UserService::spawn_password(&req.password);
 
-        user_create
+        create
     }
 }
 
 #[derive(Debug, Deserialize, Serialize, Validate)]
-pub struct UserPasswordUpdate {
+pub struct UserLoginRequest {
+    #[validate(length(min = 1, max = 100), email)]
+    pub email: String,
     #[validate(length(min = 8, max = 16))]
-    pub new_password: String,
-    #[validate(length(min = 8, max = 16))]
-    pub old_password: String,
+    pub password: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Validate)]
-pub struct UserNikeNamedUpdate {
-    #[validate(length(min = 1, max = 30))]
-    pub nike_name: String,
+impl From<UserLoginRequest> for UserCreate {
+    fn from(req: UserLoginRequest) -> Self {
+        let mut create = UserCreate::default();
+
+        create.email = req.email;
+        create.password = UserService::spawn_password(&req.password);
+
+        create
+    }
 }

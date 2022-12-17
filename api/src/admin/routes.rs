@@ -1,6 +1,9 @@
-use super::models::{KeyAndValueOption, LevelTemplateCreateOption, LevelTemplateQueryOption};
+use super::models::{
+    KeyAndValueOption, LevelTemplateCreateOption, LevelTemplateQueryOption, UserQueryRequest,
+};
 use crate::extra::FormOrJson;
 use crate::middlewares::{Auth, Bearer, JwtAuth};
+use crate::models::UserDeleteRequset;
 use next_service::Service;
 use poem::{
     get, handler, post,
@@ -11,7 +14,34 @@ use serde_json::{json, Value};
 
 use next_service::users::User;
 
-//设置全局字典
+///删除用户
+#[handler]
+async fn user_delete(
+    Data(service): Data<&Service>,
+    FormOrJson(user_delete_request): FormOrJson<UserDeleteRequset>,
+) -> poem::Result<Json<Value>> {
+    super::apis::user_delete(service, user_delete_request).await?;
+
+    Ok(Json(json!({
+        "code": 200,
+    })))
+}
+
+///获取用户列表
+#[handler]
+async fn user_list(
+    Data(service): Data<&Service>,
+    FormOrJson(user_query_request): FormOrJson<UserQueryRequest>,
+) -> poem::Result<Json<Value>> {
+    let res = super::apis::user_list(service, user_query_request).await?;
+
+    Ok(Json(json!({
+        "code": 200,
+        "result": res
+    })))
+}
+
+///设置全局字典
 #[handler]
 async fn set_app_config(
     FormOrJson(option): FormOrJson<KeyAndValueOption>,
@@ -23,7 +53,7 @@ async fn set_app_config(
     })))
 }
 
-//获取全局字典
+///获取全局字典
 #[handler]
 async fn get_app_config() -> poem::Result<Json<Value>> {
     let data = super::apis::get_app_config().await?;
@@ -34,7 +64,7 @@ async fn get_app_config() -> poem::Result<Json<Value>> {
     })))
 }
 
-//模板列表
+///模板列表
 #[handler]
 async fn find_level_templates(
     Data(service): Data<&Service>,
@@ -66,7 +96,7 @@ async fn find_level_templates(
     })))
 }
 
-//创建等级模板
+///创建等级模板
 #[handler]
 async fn create_level_template(
     Data(user): Data<&User>,
@@ -102,6 +132,14 @@ pub fn config() -> impl Endpoint {
             post(set_app_config)
                 .with(jwt_auth.clone())
                 .with(auth.clone()),
+        )
+        .at(
+            "/user_delete",
+            post(user_delete).with(jwt_auth.clone()).with(auth.clone()),
+        )
+        .at(
+            "/user_list",
+            post(user_list).with(jwt_auth.clone()).with(auth.clone()),
         )
         .at("/get_app_config", get(get_app_config))
 }

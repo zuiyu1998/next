@@ -1,13 +1,67 @@
 use std::collections::HashMap;
 
+use crate::error::Kind;
+use crate::models::UserDeleteRequset;
 use crate::{data::APPCONFIG, error::ResponseResult};
+use next_service::users::{UserQuery, UserUpdate};
 use next_service::{
     level_template::{LevelTemplate, LevelTemplateCreate, LevelTemplateQuery},
+    users::User,
     Service,
 };
 use validator::Validate;
 
-use super::models::{KeyAndValueOption, LevelTemplateCreateOption, LevelTemplateQueryOption};
+use super::models::{
+    KeyAndValueOption, LevelTemplateCreateOption, LevelTemplateQueryOption, UserQueryRequest,
+    UserQueryResponse,
+};
+
+///获取用户列表
+pub async fn user_list(
+    service: &Service,
+    user_delete_request: UserQueryRequest,
+) -> ResponseResult<UserQueryResponse> {
+    user_delete_request.validate()?;
+
+    let mut res = UserQueryResponse::default();
+    res.page = user_delete_request.page;
+    res.page_size = user_delete_request.page_size;
+
+    let user_query: UserQuery = user_delete_request.into();
+
+    let begin = service.begin().await?;
+    let user_service = begin.user();
+    let user = user_service.query(user_query).await?;
+
+    begin.commit().await?;
+
+    res.data = user;
+
+    Ok(res)
+}
+
+//删除用户
+pub async fn user_delete(
+    service: &Service,
+    user_delete_request: UserDeleteRequset,
+) -> ResponseResult<User> {
+    user_delete_request.validate()?;
+
+    if !user_delete_request.is_valid() {
+        return Err(Kind::FormatError.into());
+    }
+
+    let mut user_update: UserUpdate = user_delete_request.into();
+    user_update.status = false;
+
+    let begin = service.begin().await?;
+    let user_service = begin.user();
+    let user = user_service.update(user_update).await?;
+
+    begin.commit().await?;
+
+    Ok(user)
+}
 
 //获取全局字典
 pub async fn set_app_config(option: KeyAndValueOption) -> ResponseResult<()> {

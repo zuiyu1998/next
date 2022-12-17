@@ -26,12 +26,6 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(
-                        ColumnDef::new(Column::NikeName)
-                            .char_len(50)
-                            .unique_key()
-                            .not_null(),
-                    )
-                    .col(
                         ColumnDef::new(Column::Email)
                             .char_len(100)
                             .unique_key()

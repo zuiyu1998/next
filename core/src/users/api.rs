@@ -26,7 +26,6 @@ impl Api {
         let uid = xid::new().to_string();
 
         active.uid = Set(uid.to_owned());
-        active.nike_name = Set(String::from("uid-") + &uid);
 
         active.status = Set(true);
 
@@ -39,9 +38,18 @@ impl Api {
     ) -> Result<Model, DbErr> {
         let mut active: ActiveModel = Default::default();
 
-        if let Some(nike_name) = user_update.nike_name {
-            active.nike_name = Set(nike_name);
+        if let Some(id) = user_update.id {
+            active.id = Set(id);
         }
+
+        if let Some(uid) = user_update.uid {
+            active.uid = Set(uid);
+        }
+
+        if let Some(email) = user_update.email {
+            active.email = Set(email);
+        }
+
         if let Some(password) = user_update.password {
             active.password = Set(password);
         }

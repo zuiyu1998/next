@@ -7,6 +7,7 @@ pub mod users;
 
 pub mod app;
 pub mod data;
+pub mod models;
 
 pub mod error;
 pub mod extra;
